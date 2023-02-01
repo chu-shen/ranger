@@ -52,7 +52,12 @@ import org.apache.ranger.plugin.policyengine.RangerPolicyEngineOptions;
 import org.apache.ranger.plugin.policyengine.RangerResourceAccessInfo;
 import org.apache.ranger.plugin.store.EmbeddedServiceDefsUtil;
 import org.apache.ranger.plugin.util.*;
-
+import java.io.IOException; 
+import java.io.File; 
+import org.apache.commons.io.FileUtils; 
+import org.apache.commons.io.filefilter.IOFileFilter; 
+import org.apache.commons.io.filefilter.TrueFileFilter; 
+import org.apache.commons.io.filefilter.RegexFileFilter;
 
 public class RangerBasePlugin {
 	private static final Log LOG = LogFactory.getLog(RangerBasePlugin.class);
@@ -175,6 +180,10 @@ public class RangerBasePlugin {
 	public AuditProviderFactory getAuditProviderFactory() { return auditProviderFactory; }
 
 	public void init() {
+		LOG.info("start init RangerBasePlugin");        
+		LOG.info("copy standby");
+		copyConfigFile();
+		LOG.info("copy finished");
 		cleanup();
 
 		RangerConfiguration configuration = RangerConfiguration.getInstance();
@@ -266,6 +275,55 @@ public class RangerBasePlugin {
 			LOG.info("Policies will NOT be reordered based on number of evaluations");
 		}
 	}
+
+//String serviceHome = "CDH_" + this.serviceType.toUpperCase() + "_HOME";
+private void copyConfigFile() {
+ 
+
+String serviceHome = "CDH_" + getServiceType().toUpperCase() + "_HOME";
+ 
+    if ("CDH_HDFS_HOME".equals(serviceHome)) {
+ 
+      serviceHome = "CDH_HADOOP_HOME";
+ 
+    }
+
+if ("CDH_ATLAS_HOME".equals(serviceHome)) {
+ 
+      serviceHome = "CS_ATLAS_HOME";
+ 
+    }
+
+ 
+    serviceHome = System.getenv(serviceHome);
+ LOG.info("current service:"+serviceHome);
+    File dir = new File(serviceHome);
+ 
+    String userDir = System.getProperty("user.dir");
+LOG.info("current dir:"+userDir); 
+    File destDir = new File(userDir);
+ 
+    IOFileFilter regexFileFilter = new RegexFileFilter("ranger-.+xml");
+ 
+    Collection<File> configFileList = FileUtils.listFiles(dir, regexFileFilter, TrueFileFilter.INSTANCE);
+ 
+    for (File rangerConfigFile : configFileList) {
+ 
+      try {
+
+LOG.info("start copy config"); 
+        FileUtils.copyFileToDirectory(rangerConfigFile, destDir);
+ 
+LOG.info("copy complete!");
+      } catch (IOException e) {
+ 
+        LOG.error("Copy ranger config file failed.", e);
+ 
+      }
+ 
+    }
+ 
+  } 
 
 	public void setPolicies(ServicePolicies policies) {
 		if (LOG.isDebugEnabled()) {

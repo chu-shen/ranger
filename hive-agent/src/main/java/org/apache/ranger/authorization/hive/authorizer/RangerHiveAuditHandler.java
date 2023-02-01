@@ -21,11 +21,7 @@ package org.apache.ranger.authorization.hive.authorizer;
 
 import java.util.*;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.hive.ql.security.authorization.plugin.HiveOperationType;
 import org.apache.ranger.audit.model.AuthzAuditEvent;
 import org.apache.ranger.plugin.audit.RangerDefaultAuditHandler;
 import org.apache.ranger.plugin.model.RangerPolicy;
@@ -36,8 +32,6 @@ import org.apache.ranger.plugin.policyengine.RangerAccessResult;
 import com.google.common.collect.Lists;
 
 public class RangerHiveAuditHandler extends RangerDefaultAuditHandler {
-
-	private static final Log LOG = LogFactory.getLog(RangerDefaultAuditHandler.class);
 
 	public static final String  ACCESS_TYPE_ROWFILTER = "ROW_FILTER";
 	Collection<AuthzAuditEvent> auditEvents  = null;
@@ -61,34 +55,10 @@ public class RangerHiveAuditHandler extends RangerDefaultAuditHandler {
 		if (request instanceof RangerHiveAccessRequest && resource instanceof RangerHiveResource) {
 			RangerHiveAccessRequest hiveAccessRequest = (RangerHiveAccessRequest) request;
 			RangerHiveResource hiveResource = (RangerHiveResource) resource;
-			HiveAccessType hiveAccessType = hiveAccessRequest.getHiveAccessType();
 
-			if (hiveAccessType == HiveAccessType.USE && hiveResource.getObjectType() == HiveObjectType.DATABASE && StringUtils.isBlank(hiveResource.getDatabase())) {
-				// this should happen only for SHOWDATABASES
+			if (hiveAccessRequest.getHiveAccessType() == HiveAccessType.USE && hiveResource.getObjectType() == HiveObjectType.DATABASE) {
+				// this should happen only for SHOWDATABASES and USE <db-name> commands
 				auditEvent.setTags(null);
-			}
-
-			if (hiveAccessType == HiveAccessType.REPLADMIN ) {
-				// In case of REPL commands Audit should show what REPL Command instead of REPLADMIN access type
-				String context = request.getRequestData();
-					String replAccessType = getReplCmd(context);
-					auditEvent.setAccessType(replAccessType);
-			}
-
-			if (hiveAccessType == HiveAccessType.SERVICEADMIN) {
-				String hiveOperationType = request.getAction();
-				String commandStr = request.getRequestData();
-				if (HiveOperationType.KILL_QUERY.name().equalsIgnoreCase(hiveOperationType)) {
-					String queryId = getServiceAdminQueryId(commandStr);
-					if (!StringUtils.isEmpty(queryId)) {
-						auditEvent.setRequestData(queryId);
-					}
-					commandStr = getServiceAdminCmd(commandStr);
-					if (StringUtils.isEmpty(commandStr)) {
-						commandStr = hiveAccessType.name();
-					}
-				}
-				auditEvent.setAccessType(commandStr);
 			}
 		}
 
@@ -209,10 +179,6 @@ public class RangerHiveAuditHandler extends RangerDefaultAuditHandler {
 
 		auditEvent.setResourcePath(dfsCommand);
 
-		if(LOG.isDebugEnabled()){
-			LOG.debug("Logging DFS event " + auditEvent.toString());
-		}
-
 		addAuthzAuditEvent(auditEvent);
     }
 
@@ -243,37 +209,4 @@ public class RangerHiveAuditHandler extends RangerDefaultAuditHandler {
     		}
     	}
     }
-
-    private String getReplCmd(String cmdString) {
-		String ret = "REPL";
-		if (cmdString != null) {
-			String[] cmd = cmdString.trim().split("\\s+");
-			if (!ArrayUtils.isEmpty(cmd) && cmd.length > 2) {
-				ret = cmd[0] + " " + cmd[1];
-			}
-		}
-		return ret;
-	}
-
-	private String getServiceAdminCmd(String cmdString) {
-		String ret = "SERVICE ADMIN";
-		if (cmdString != null) {
-			String[] cmd = cmdString.trim().split("\\s+");
-			if (!ArrayUtils.isEmpty(cmd) && cmd.length > 1) {
-				ret = cmd[0] + " " + cmd[1];
-			}
-		}
-		return ret;
-	}
-
-	private String getServiceAdminQueryId(String cmdString) {
-		String ret = "QUERY ID = ";
-		if (cmdString != null) {
-			String[] cmd = cmdString.trim().split("\\s+");
-			if (!ArrayUtils.isEmpty(cmd) && cmd.length > 2) {
-				ret = ret + cmd[2];
-			}
-		}
-		return ret;
-	}
 }

@@ -14,7 +14,9 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
---><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.apache</groupId>
@@ -116,10 +118,10 @@
         <gson.version>2.2.4</gson.version>
         <guice.version>4.0</guice.version>
         <hadoop.version>3.1.1</hadoop.version>
-	<ozone.version>0.4.0-alpha</ozone.version>
+        <ozone.version>0.4.0-alpha</ozone.version>
         <hamcrest.all.version>1.3</hamcrest.all.version>
         <hbase.version>2.0.2</hbase.version>
-        <hive.version>3.1.0</hive.version>
+        <hive.version>2.1.1-cdh6.3.2</hive.version>
         <hbase-shaded-protobuf>2.0.0</hbase-shaded-protobuf>
         <hbase-shaded-netty>2.0.0</hbase-shaded-netty>
         <hbase-shaded-miscellaneous>2.0.0</hbase-shaded-miscellaneous>
@@ -183,11 +185,11 @@
         <velocity.version>1.7</velocity.version>
         <zookeeper.version>3.4.14</zookeeper.version>
         <codehaus.woodstox.stax2api.version>3.1.4</codehaus.woodstox.stax2api.version>
-		<fasterxml.woodstox.version>5.0.3</fasterxml.woodstox.version>
-		<fasterxml.jackson.version>2.9.9</fasterxml.jackson.version>
-		<kstruct.gethostname4j.version>0.0.2</kstruct.gethostname4j.version>
-		<jna.version>5.2.0</jna.version>
-		<jna-platform.version>5.2.0</jna-platform.version>
+        <fasterxml.woodstox.version>5.0.3</fasterxml.woodstox.version>
+        <fasterxml.jackson.version>2.9.9</fasterxml.jackson.version>
+        <kstruct.gethostname4j.version>0.0.2</kstruct.gethostname4j.version>
+        <jna.version>5.2.0</jna.version>
+        <jna-platform.version>5.2.0</jna-platform.version>
         <!-- presto plugin deps -->
         <presto.airlift.version>0.178</presto.airlift.version>
         <presto.bval-jsr.version>2.0.0</presto.bval-jsr.version>
@@ -216,7 +218,7 @@
                 <module>knox-agent</module>
                 <module>storm-agent</module>
                 <module>plugin-yarn</module>
-		<module>plugin-ozone</module>
+                <module>plugin-ozone</module>
                 <module>security-admin</module>
                 <module>plugin-kafka</module>
                 <module>plugin-solr</module>
@@ -236,7 +238,7 @@
                 <module>ranger-hbase-plugin-shim</module>
                 <module>ranger-knox-plugin-shim</module>
                 <module>ranger-yarn-plugin-shim</module>
-		<module>ranger-ozone-plugin-shim</module>
+                <module>ranger-ozone-plugin-shim</module>
                 <module>ranger-storm-plugin-shim</module>
                 <module>ranger-kafka-plugin-shim</module>
                 <module>ranger-solr-plugin-shim</module>
@@ -267,7 +269,7 @@
                                 <descriptor>src/main/assembly/storm-agent.xml</descriptor>
                                 <descriptor>src/main/assembly/plugin-kafka.xml</descriptor>
                                 <descriptor>src/main/assembly/plugin-yarn.xml</descriptor>
-				<descriptor>src/main/assembly/plugin-ozone.xml</descriptor>
+                                <descriptor>src/main/assembly/plugin-ozone.xml</descriptor>
                                 <descriptor>src/main/assembly/plugin-solr.xml</descriptor>
                                 <descriptor>src/main/assembly/admin-web.xml</descriptor>
                                 <descriptor>src/main/assembly/solr_audit_conf.xml</descriptor>
@@ -450,7 +452,7 @@
                 </plugins>
             </build>
         </profile>
-	<profile>
+        <profile>
             <id>ranger-ozone-plugin</id>
             <modules>
                 <module>agents-audit</module>
@@ -701,7 +703,7 @@
                 </os>
             </activation>
             <modules>
-		<module>jisql</module>
+                <module>jisql</module>
                 <module>agents-audit</module>
                 <module>agents-common</module>
                 <module>agents-cred</module>
@@ -758,7 +760,7 @@
                     <plugin>
                         <artifactId>maven-assembly-plugin</artifactId>
                         <version>2.2-beta-5</version>
-			<configuration>
+                        <configuration>
                             <descriptors>
                                 <descriptor>src/main/assembly/hdfs-agent.xml</descriptor>
                                 <descriptor>src/main/assembly/hive-agent.xml</descriptor>
@@ -794,9 +796,9 @@
                 <os>
                     <family>linux</family>
                 </os>
-				<file>
-					<exists>/usr/include/security/pam_appl.h</exists>
-				</file>
+                <file>
+                    <exists>/usr/include/security/pam_appl.h</exists>
+                </file>
             </activation>
             <modules>
                 <module>unixauthpam</module>
@@ -838,6 +840,15 @@
         </repository>
     </distributionManagement>
     <repositories>
+        <!--配置CDH版本的下载环境-->
+        <repository>
+            <id>cloudera</id>
+            <url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
+            <name>Cloudera Repositories</name>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
         <repository>
             <id>apache.snapshots.https</id>
             <name>Apache Development Snapshot Repository</name>
@@ -903,21 +914,21 @@
                 <artifactId>gson</artifactId>
                 <version>${gson.version}</version>
             </dependency>
-			<dependency>
-				<groupId>com.webcohesion.enunciate</groupId>
-				<artifactId>enunciate-core-annotations</artifactId>
-				<version>${enunciate.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>commons-beanutils</groupId>
-				<artifactId>commons-beanutils</artifactId>
-				<version>${commons.beanutils.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.hbase</groupId>
-				<artifactId>hbase-client</artifactId>
-				<version>${hbase.version}</version>
-			</dependency>
+            <dependency>
+                <groupId>com.webcohesion.enunciate</groupId>
+                <artifactId>enunciate-core-annotations</artifactId>
+                <version>${enunciate.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>${commons.beanutils.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.hbase</groupId>
+                <artifactId>hbase-client</artifactId>
+                <version>${hbase.version}</version>
+            </dependency>
             <dependency>
                 <groupId>javax.annotation</groupId>
                 <artifactId>jsr250-api</artifactId>
@@ -933,7 +944,7 @@
                 <artifactId>jaxb-runtime</artifactId>
                 <version>${jaxb.api.version}</version>
             </dependency>
-		</dependencies>
+        </dependencies>
     </dependencyManagement>
     <build>
         <pluginManagement>
@@ -1026,26 +1037,26 @@
                     <artifactId>maven-release-plugin</artifactId>
                     <version>2.5.2</version>
                 </plugin>
-				<plugin>
-					<groupId>com.webcohesion.enunciate</groupId>
-					<artifactId>enunciate-maven-plugin</artifactId>
-					<version>${enunciate.version}</version>
-					<configuration>
-						<enunciateArtifactId/>
-						<docsDir>docs/src/site/</docsDir>
-						<source>1.8</source>
-						<target>1.8</target>
-					</configuration>
-					<executions>
-						<execution>
-							<goals>
-								<goal>docs</goal>
-							</goals>
-							<phase>package</phase>
-						</execution>
-					</executions>
-				</plugin>
-			</plugins>
+                <plugin>
+                    <groupId>com.webcohesion.enunciate</groupId>
+                    <artifactId>enunciate-maven-plugin</artifactId>
+                    <version>${enunciate.version}</version>
+                    <configuration>
+                        <enunciateArtifactId/>
+                        <docsDir>docs/src/site/</docsDir>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>docs</goal>
+                            </goals>
+                            <phase>package</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
         </pluginManagement>
         <plugins>
             <plugin>

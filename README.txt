@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+Ranger2.0.0集成CDH6.3.2，部分代码来源网络（出处未及时记录），在此表示感谢！
+
 Check Apache Ranger Wiki for up to date instruction: 
 https://cwiki.apache.org/confluence/display/RANGER/Index
 
