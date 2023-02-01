@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+Ranger2.1.0集成HBase2.3.3，结果未经验证
+
 Check Apache Ranger Wiki for up to date instruction: 
 https://cwiki.apache.org/confluence/display/RANGER/Index
 
